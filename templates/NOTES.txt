@@ -1,0 +1,114 @@
+{{- if .Release.IsInstall }}
+================================================================================
+🎉 Hyperswitch Istio has been installed!
+================================================================================
+
+Release Name: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+Chart Version: {{ .Chart.Version }}
+App Version: {{ .Chart.AppVersion }}
+
+================================================================================
+📦 Components Installed:
+================================================================================
+
+{{- if index .Values "istio-base" "enabled" }}
+✅ Istio Base CRDs - Installed
+{{- else }}
+❌ Istio Base CRDs - Disabled
+{{- end }}
+
+{{- if .Values.istiod.enabled }}
+✅ Istiod (Control Plane) - Installed
+   Image: {{ .Values.istiod.global.hub }}/pilot:{{ .Values.istiod.global.tag }}
+{{- else }}
+❌ Istiod (Control Plane) - Disabled
+{{- end }}
+
+{{- if index .Values "istio-gateway" "enabled" }}
+✅ Istio Ingress Gateway - Installed
+   Image: {{ index .Values "istio-gateway" "global" "hub" }}/proxyv2:{{ index .Values "istio-gateway" "global" "tag" }}
+   Service Type: {{ index .Values "istio-gateway" "service" "type" }}
+{{- else }}
+❌ Istio Ingress Gateway - Disabled
+{{- end }}
+
+{{- if .Values.ingress.enabled }}
+✅ ALB Ingress - Configured
+   Class: {{ .Values.ingress.className }}
+{{- else }}
+❌ ALB Ingress - Disabled
+{{- end }}
+
+================================================================================
+🔍 Verify Installation:
+================================================================================
+
+1. Check Istio components status:
+   kubectl get pods -n {{ .Release.Namespace }}
+
+2. Verify CRDs are installed:
+   kubectl get crd | grep istio
+
+3. Check Istio services:
+   kubectl get svc -n {{ .Release.Namespace }}
+
+4. View Gateway configuration:
+   kubectl get gateway -n {{ .Release.Namespace }}
+
+5. View VirtualService configuration:
+   kubectl get virtualservice -A
+
+6. Check Ingress status:
+   kubectl get ingress -n {{ .Release.Namespace }}
+
+================================================================================
+🚀 Next Steps:
+================================================================================
+
+{{- if eq (index .Values "istio-gateway" "service" "type") "LoadBalancer" }}
+1. Get the external IP of the Istio Gateway:
+   kubectl get svc {{ index .Values "istio-gateway" "name" }} -n {{ .Release.Namespace }}
+
+2. Access your application through the Gateway external IP.
+{{- else if .Values.ingress.enabled }}
+1. Wait for the ALB to be provisioned:
+   kubectl get ingress -n {{ .Release.Namespace }} -w
+
+2. Get the ALB DNS name:
+   kubectl get ingress hyperswitch-istio-app-alb-ingress -n {{ .Release.Namespace }} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+
+3. Access your application through the ALB endpoint.
+{{- else }}
+1. The gateway is using ClusterIP. You may need to:
+   - Set up port-forwarding: kubectl port-forward -n {{ .Release.Namespace }} svc/{{ index .Values "istio-gateway" "name" }} 8080:80
+   - Or configure an Ingress/LoadBalancer service
+{{- end }}
+
+================================================================================
+🔧 Troubleshooting:
+================================================================================
+
+If pods are not running, check logs:
+- Istiod logs: kubectl logs -n {{ .Release.Namespace }} -l app=istiod
+- Gateway logs: kubectl logs -n {{ .Release.Namespace }} -l app={{ index .Values "istio-gateway" "name" }}
+
+For more details, check events:
+- kubectl get events -n {{ .Release.Namespace }} --sort-by='.lastTimestamp'
+
+================================================================================
+{{- else if .Release.IsUpgrade }}
+================================================================================
+🔄 Hyperswitch Istio has been upgraded!
+================================================================================
+
+Release Name: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+Chart Version: {{ .Chart.Version }}
+Revision: {{ .Release.Revision }}
+
+Check the status of the upgraded components:
+kubectl get pods -n {{ .Release.Namespace }}
+
+================================================================================
+{{- end }}

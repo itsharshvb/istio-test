@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: hyperswitch-application-server
+  namespace: hyperswitch
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  gateways:
+  - istio-system/hyperswitch-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /sample_data
+    rewrite:
+      uri: /not/authorization
+    route:
+    - destination:
+        host: hyperswitch-server
+        subset: {{ .Values.image.version }}
+      weight: 100
+    timeout: 50s
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: hyperswitch-server
+        subset: {{ .Values.image.version }}
+      weight: 100
+    timeout: 50s
