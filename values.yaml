@@ -2,6 +2,14 @@
 
 replicaCount: 1
 
+# Service-specific versions
+hyperswitchServer:
+  version: "v1o114o0"  # hyperswitch-router version
+
+hyperswitchControlCenter:
+  version: "v1o37o1"   # hyperswitch-control-center version
+
+# Legacy image version (kept for backward compatibility)
 image:
   version: "v1o107o0"
 

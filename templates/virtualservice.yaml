@@ -15,13 +15,22 @@ spec:
   http:
   - match:
     - uri:
+        prefix: /dashboard
+    route:
+    - destination:
+        host: hyperswitch-control-center
+        subset: {{ .Values.hyperswitchControlCenter.version }}
+      weight: 100
+    timeout: 50s
+  - match:
+    - uri:
         prefix: /sample_data
     rewrite:
       uri: /not/authorization
     route:
     - destination:
         host: hyperswitch-server
-        subset: {{ .Values.image.version }}
+        subset: {{ .Values.hyperswitchServer.version }}
       weight: 100
     timeout: 50s
   - match:
@@ -30,6 +39,6 @@ spec:
     route:
     - destination:
         host: hyperswitch-server
-        subset: {{ .Values.image.version }}
+        subset: {{ .Values.hyperswitchServer.version }}
       weight: 100
     timeout: 50s

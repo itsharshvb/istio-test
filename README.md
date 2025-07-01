@@ -120,7 +120,9 @@ The following table lists the configurable parameters and their default values.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| image.version | string | `"v1o107o0"` | Hyperswitch image version |
+| hyperswitchServer.version | string | `"v1o114o0"` | Hyperswitch server (router) version |
+| hyperswitchControlCenter.version | string | `"v1o37o1"` | Hyperswitch control center version |
+| image.version | string | `"v1o107o0"` | Legacy image version (deprecated) |
 | ingress.annotations | object | `{}` | ALB Ingress annotations |
 | ingress.className | string | `"alb"` | Ingress class name |
 | ingress.enabled | bool | `true` | Enable ingress |
