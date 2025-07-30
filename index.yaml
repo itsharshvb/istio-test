@@ -51,13 +51,6 @@ entries:
       name: gateway
       repository: https://istio-release.storage.googleapis.com/charts
       version: 1.25.0
-    description: A Helm chart for Kubernetes
-    digest: 9b0c21c941a6d94726bbdcab161c506f2114542a3dde0cda1f68f70f6efac89f
-    name: hyperswitch-istio
-    type: application
-    urls:
-    - https://itsharshvb.github.io/istio-test/hyperswitch-istio-0.2.0.tgz
-    version: 0.2.0
   - apiVersion: v2
     appVersion: 1.16.0
     created: "2025-07-01T14:12:07.936618+05:30"
